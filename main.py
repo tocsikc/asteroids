@@ -4,6 +4,7 @@ from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from shot import Shot
 
 def main():
     pg.init()
@@ -22,6 +23,7 @@ def main():
     AsteroidField.containers = (updatable)
     Asteroid.containers = (asteroids, updatable, drawable)
     Player.containers = (updatable, drawable)
+    Shot.containers = (shots, updatable, drawable)
 
     player = Player((SCREEN_WIDTH / 2), (SCREEN_HEIGHT / 2))
     asteroid_field = AsteroidField()
@@ -37,6 +39,12 @@ def main():
             if player.check_collide(asteroid):
                 print("Game over!")
                 sys.exit(0)
+
+            for bullet in shots:
+                if bullet.check_collide(asteroid):
+                    bullet.kill()
+                    asteroid.split()
+
 
         for object in drawable:
             object.draw(screen)
