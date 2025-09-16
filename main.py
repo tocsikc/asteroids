@@ -1,10 +1,11 @@
 import pygame as pg
-import sys
+import time
 from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
+from ondeath import *
 
 def main():
     pg.init()
@@ -15,6 +16,10 @@ def main():
     clock = pg.time.Clock()
     dt = 0
 
+    # Used to calculate score
+    time_started = int(time.time())
+    asteroids_hit = 0
+ 
     updatable = pg.sprite.Group()
     drawable = pg.sprite.Group()
     asteroids = pg.sprite.Group()
@@ -35,18 +40,18 @@ def main():
             
         screen.fill("black")
         updatable.update(dt)
+
         for asteroid in asteroids:
-            if player.check_collide(asteroid):
-                print("Game over!")
-                sys.exit(0)
+            if player.check_collide(asteroid): # Player dies
+                on_death(time_started, asteroids_hit)
 
             for bullet in shots:
-                if bullet.check_collide(asteroid):
+                if bullet.check_collide(asteroid): # Bullet hits asteroid
+                    asteroids_hit += 1
                     bullet.kill()
                     asteroid.split()
 
-
-        for object in drawable:
+        for object in drawable: 
             object.draw(screen)
 
         pg.display.flip()
